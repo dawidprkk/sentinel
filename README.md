@@ -42,6 +42,7 @@ cp .env.local.example .env.local
 
 ### Running Locally
 
+#### Tinybird Local Development
 ```bash
 # local installation (recommended for development)
 curl https://tinybird.co | sh - # Install Tinybird CLI and the local container
@@ -56,6 +57,7 @@ Update .env.local with your Tinybird token
 and API URL (for local: http://localhost:7181)
 ```
 
+#### Prepopulate Database and Start Server
 ```bash
 # Seed the database with default rules
 npm run db:generate
@@ -75,20 +77,6 @@ The app will be available at `http://localhost:3000`.
 | `npm run db:generate` | Generate Drizzle ORM migrations |
 | `npm run db:migrate` | Run database migrations |
 | `npm run db:seed` | Seed database with default rules |
-
-### Local Tinybird
-
-The `tinybird/` directory contains all datasource and pipe definitions. 
-
-```bash
-# local installation (recommended for development)
-curl https://tinybird.co | sh - # Install Tinybird CLI and the local container
-cd tinybird
-tb local start
-# In another terminal, push resources to local Tinybird instance
-cd tinybird && tb deploy
-update .env.local with your Tinybird token (run 'tb token ls' pick admin local_testing@tinybird.co) and API URL (for local: http://localhost:7181)
-```
 
 ## Deployment
 
