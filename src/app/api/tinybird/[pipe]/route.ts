@@ -50,9 +50,12 @@ export async function GET(
     return NextResponse.json(result);
   } catch (error) {
     console.error(`Tinybird query error [${pipe}]:`, error);
+    const message =
+      error instanceof Error ? error.message : "Tinybird query failed";
+    const isRateLimit = message.includes("daily request limit exceeded");
     return NextResponse.json(
-      { error: "Tinybird query failed" },
-      { status: 502 },
+      { error: isRateLimit ? "rate_limit" : "Tinybird query failed" },
+      { status: isRateLimit ? 429 : 502 },
     );
   }
 }
