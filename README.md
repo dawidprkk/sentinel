@@ -2,6 +2,17 @@
 
 Real-time Trust & Safety platform for email delivery. Sentinel evaluates email send requests against configurable rules, detects abuse patterns, and provides real-time analytics and monitoring dashboards.
 
+#### Imporant Note
+This project is a **proof-of-concept** designed to demonstrate the feasibility of building a real-time T&S platform. 
+It is not production-ready and has several limitations in terms of scalability, reliability, and security. 
+The architecture and implementation choices prioritize simplicity and clarity over robustness and performance for demonstration purposes.
+More details on limitations and future work are covered in the respective sections below.
+
+**Note on Tinybird Free Tier limitations:**
+- The daily quota for the free tier is <span style="color:red;">1k events per day</span>, which includes both data ingested and queried. The simulator generates a small but significant number of events, so you may hit the quota limit quickly. To mitigate this, events are batched before being written to Tinybird, auto-refresh is disabled by default, and the rate of new events is low. In addition during testing, you can:
+  - Reduce the number of personas and their sending rates in the simulator configuration.
+  - Focus on testing specific features or rules rather than running the full simulation continuously.
+
 ## Table of Contents
 
 - [Local Setup](#local-setup)
