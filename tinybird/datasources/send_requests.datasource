@@ -1,0 +1,24 @@
+DESCRIPTION >
+    Email send requests stream
+
+SCHEMA >
+    `event_id` String `json:$.eventId`,
+    `timestamp` DateTime64(3) `json:$.timestamp`,
+    `sender_account_id` String `json:$.sender.accountId`,
+    `sender_email` String `json:$.sender.email`,
+    `sender_domain` String `json:$.sender.domain`,
+    `sender_ip` String `json:$.sender.ip`,
+    `recipient_email` String `json:$.recipient.email`,
+    `recipient_domain` String `json:$.recipient.domain`,
+    `content_subject` String `json:$.content.subject`,
+    `content_has_links` UInt8 `json:$.content.hasLinks`,
+    `content_link_count` UInt16 `json:$.content.linkCount`,
+    `content_has_attachments` UInt8 `json:$.content.hasAttachments`,
+    `content_body_length_bytes` UInt32 `json:$.content.bodyLengthBytes`,
+    `content_suspicious_keywords` Array(String) `json:$.content.suspiciousKeywords[:]`,
+    `metadata_region` String `json:$.metadata.region`,
+    `metadata_user_agent` String `json:$.metadata.userAgent`
+
+ENGINE "MergeTree"
+ENGINE_PARTITION_KEY "toYYYYMM(timestamp)"
+ENGINE_SORTING_KEY "timestamp, sender_account_id"

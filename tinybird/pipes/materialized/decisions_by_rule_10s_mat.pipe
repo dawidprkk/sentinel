@@ -1,0 +1,17 @@
+DESCRIPTION >
+    Materialize decision counts by rule, severity and action into 10-second buckets
+
+NODE mat
+SQL >
+    SELECT
+        toStartOfInterval(timestamp, INTERVAL 10 SECOND) AS bucket,
+        action,
+        ifNull(rule_id, '') AS rule_id,
+        ifNull(rule_name, '') AS rule_name,
+        severity,
+        sumState(toUInt64(1)) AS hit_count
+    FROM decisions
+    GROUP BY bucket, action, rule_id, rule_name, severity
+
+TYPE materialized
+DATASOURCE decisions_by_rule_10s_mv

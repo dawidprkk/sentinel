@@ -1,0 +1,53 @@
+DESCRIPTION >
+    Ad-hoc event search with filters, joined with delivery feedback
+
+NODE endpoint
+SQL >
+    %
+    SELECT
+        e.event_id AS event_id,
+        e.timestamp AS timestamp,
+        e.sender_account_id,
+        e.sender_email,
+        e.sender_domain,
+        e.recipient_email,
+        e.content_subject,
+        e.content_link_count,
+        d.action AS decision,
+        d.rule_name,
+        d.reason,
+        f.status AS delivery_status,
+        f.detail AS delivery_detail
+    FROM send_requests e
+    LEFT JOIN decisions d ON e.event_id = d.event_id
+    LEFT JOIN delivery_feedback f ON e.event_id = f.event_id
+    WHERE 1=1
+        {% if defined(account_id) %}
+            AND positionCaseInsensitiveUTF8(
+                e.sender_account_id,
+                {{ String(account_id) }}
+            ) > 0
+        {% end %}
+        {% if defined(domain) %}
+            AND positionCaseInsensitiveUTF8(
+                e.sender_domain,
+                {{ String(domain) }}
+            ) > 0
+        {% end %}
+        {% if defined(decision_filter) %}
+            AND d.action = {{ String(decision_filter) }}
+        {% end %}
+        {% if defined(delivery_status) %}
+            AND f.status = {{ String(delivery_status) }}
+        {% end %}
+        {% if defined(start_time) %}
+            AND e.timestamp >= {{ DateTime64(start_time) }}
+        {% end %}
+        {% if defined(end_time) %}
+            AND e.timestamp <= {{ DateTime64(end_time) }}
+        {% end %}
+    ORDER BY e.timestamp DESC
+    LIMIT {{ Int32(limit, 100) }}
+    OFFSET {{ Int32(offset, 0) }}
+
+TYPE endpoint

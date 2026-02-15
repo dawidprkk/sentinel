@@ -1,0 +1,13 @@
+DESCRIPTION >
+    Delivery feedback events for allowed emails
+
+SCHEMA >
+    `feedback_id` String `json:$.feedbackId`,
+    `event_id` String `json:$.eventId`,
+    `timestamp` DateTime64(3) `json:$.timestamp`,
+    `status` String `json:$.status`,
+    `detail` String `json:$.detail`
+
+ENGINE "MergeTree"
+ENGINE_PARTITION_KEY "toYYYYMM(timestamp)"
+ENGINE_SORTING_KEY "timestamp, event_id, status"

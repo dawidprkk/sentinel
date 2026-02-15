@@ -1,0 +1,15 @@
+DESCRIPTION >
+    Send request throughput in 10-second buckets
+
+NODE endpoint
+SQL >
+    %
+        SELECT
+            bucket,
+            sumMerge(request_count) AS request_count
+        FROM requests_10s_mv
+        WHERE bucket >= {{DateTime64(start_time, '2000-01-01 00:00:00.000')}}
+        GROUP BY bucket
+        ORDER BY bucket DESC
+
+TYPE endpoint

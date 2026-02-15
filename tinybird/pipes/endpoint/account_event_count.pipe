@@ -1,0 +1,12 @@
+DESCRIPTION >
+    Count events for an account in a time window (used by rules engine)
+
+NODE endpoint
+SQL >
+    %
+    SELECT count() AS event_count
+    FROM send_requests
+    WHERE sender_account_id = {{ String(account_id) }}
+      AND timestamp >= now() - INTERVAL {{ Int32(window_seconds, 60) }} second
+
+TYPE endpoint

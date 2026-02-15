@@ -1,0 +1,13 @@
+DESCRIPTION >
+    Materialized view: decision counts by rule, severity and action pre-aggregated per 10 seconds
+
+SCHEMA >
+    `bucket` DateTime64(3),
+    `action` String,
+    `rule_id` String,
+    `rule_name` String,
+    `severity` String,
+    `hit_count` AggregateFunction(sum, UInt64)
+
+ENGINE "AggregatingMergeTree"
+ENGINE_SORTING_KEY "bucket, action, rule_name, rule_id, severity"

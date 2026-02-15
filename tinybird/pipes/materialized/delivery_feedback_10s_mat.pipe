@@ -1,0 +1,18 @@
+DESCRIPTION >
+    Materialize delivery feedback counts by status into 10-second buckets
+
+NODE mat
+SQL >
+    SELECT
+        toStartOfInterval(timestamp, INTERVAL 10 SECOND) AS bucket,
+        sumState(toUInt64(1)) AS total,
+        sumState(toUInt64(status = 'delivered')) AS delivered,
+        sumState(toUInt64(status = 'bounced')) AS bounced,
+        sumState(toUInt64(status = 'complained')) AS complained,
+        sumState(toUInt64(status = 'opened')) AS opened,
+        sumState(toUInt64(status = 'clicked')) AS clicked
+    FROM delivery_feedback
+    GROUP BY bucket
+
+TYPE materialized
+DATASOURCE delivery_feedback_10s_mv

@@ -1,0 +1,21 @@
+DESCRIPTION >
+    Top accounts with highest bounce and complaint rates for the selected time range
+
+NODE endpoint
+SQL >
+    %
+        SELECT
+            e.sender_account_id,
+            count() AS total_feedback,
+            countIf(f.status = 'bounced') AS bounces,
+            countIf(f.status = 'complained') AS complaints,
+            round(countIf(f.status IN ('bounced', 'complained')) / count() * 100, 2) AS problem_rate_pct
+        FROM delivery_feedback f
+        JOIN send_requests e ON f.event_id = e.event_id
+        WHERE f.timestamp >= {{DateTime64(start_time, '2000-01-01 00:00:00.000')}}
+        GROUP BY e.sender_account_id
+        HAVING total_feedback >= 5 and problem_rate_pct > 0
+        ORDER BY problem_rate_pct DESC, total_feedback DESC
+        LIMIT {{Int32(limit, 10)}}
+
+TYPE endpoint

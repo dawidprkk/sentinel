@@ -1,0 +1,10 @@
+DESCRIPTION >
+    Materialized view: request counts and unique senders pre-aggregated in 10-second buckets
+
+SCHEMA >
+    `bucket` DateTime64(3),
+    `request_count` AggregateFunction(sum, UInt64),
+    `unique_senders` AggregateFunction(uniq, String)
+
+ENGINE "AggregatingMergeTree"
+ENGINE_SORTING_KEY "bucket"

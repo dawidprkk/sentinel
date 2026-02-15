@@ -1,0 +1,25 @@
+DESCRIPTION >
+    Aggregated overview stats for the selected time range
+
+NODE endpoint
+SQL >
+    %
+        SELECT
+            r.total_requests,
+            d.total_decisions,
+            d.total_blocks,
+            d.total_flags,
+            toFloat64(if(d.total_decisions > 0, round(d.total_blocks / d.total_decisions * 100, 1), 0)) AS block_rate_pct
+        FROM
+            (SELECT
+                sumMerge(request_count) AS total_requests
+            FROM requests_10s_mv
+            WHERE bucket >= {{DateTime64(start_time, '2000-01-01 00:00:00.000')}}) AS r,
+            (SELECT
+                sumMerge(total_decisions) AS total_decisions,
+                sumMerge(block_count) AS total_blocks,
+                sumMerge(flag_count) AS total_flags
+            FROM decisions_10s_mv
+            WHERE bucket >= {{DateTime64(start_time, '2000-01-01 00:00:00.000')}}) AS d
+
+TYPE endpoint

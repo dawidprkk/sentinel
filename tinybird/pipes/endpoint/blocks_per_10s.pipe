@@ -1,0 +1,18 @@
+DESCRIPTION >
+    Block decisions in 10-second buckets
+
+NODE endpoint
+SQL >
+    %
+        SELECT
+            bucket,
+            sumMerge(total_decisions) AS total_decisions,
+            sumMerge(block_count) AS block_count,
+            sumMerge(flag_count) AS flag_count,
+            sumMerge(allow_count) AS allow_count
+        FROM decisions_10s_mv
+        WHERE bucket >= {{DateTime64(start_time, '2000-01-01 00:00:00.000')}}
+        GROUP BY bucket
+        ORDER BY bucket DESC
+
+TYPE endpoint

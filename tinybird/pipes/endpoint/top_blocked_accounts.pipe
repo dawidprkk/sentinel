@@ -1,0 +1,26 @@
+DESCRIPTION >
+    Top blocked sender accounts in selected time range
+
+NODE get_blocked_events
+SQL >
+    %
+        SELECT d.event_id, d.rule_name, d.reason, d.timestamp
+        FROM decisions d
+        WHERE d.action = 'block'
+          AND d.timestamp >= {{DateTime64(start_time, '2000-01-01 00:00:00.000')}}
+
+NODE endpoint
+SQL >
+    SELECT
+        e.sender_account_id,
+        e.sender_domain,
+        count() AS block_count,
+        groupArray(10)(get_blocked_events.rule_name) AS triggered_rules,
+        max(get_blocked_events.timestamp) AS last_blocked_at
+    FROM get_blocked_events
+    JOIN send_requests e ON get_blocked_events.event_id = e.event_id
+    GROUP BY e.sender_account_id, e.sender_domain
+    ORDER BY block_count DESC
+    LIMIT 20
+
+TYPE endpoint

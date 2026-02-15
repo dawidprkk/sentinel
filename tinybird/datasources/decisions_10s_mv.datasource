@@ -1,0 +1,12 @@
+DESCRIPTION >
+    Materialized view: decision counts pre-aggregated in 10-second buckets
+
+SCHEMA >
+    `bucket` DateTime64(3),
+    `total_decisions` AggregateFunction(sum, UInt64),
+    `block_count` AggregateFunction(sum, UInt64),
+    `flag_count` AggregateFunction(sum, UInt64),
+    `allow_count` AggregateFunction(sum, UInt64)
+
+ENGINE "AggregatingMergeTree"
+ENGINE_SORTING_KEY "bucket"

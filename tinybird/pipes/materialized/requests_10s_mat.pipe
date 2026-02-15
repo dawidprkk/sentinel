@@ -1,0 +1,14 @@
+DESCRIPTION >
+    Materialize request counts and unique senders into 10-second buckets
+
+NODE mat
+SQL >
+    SELECT
+        toStartOfInterval(timestamp, INTERVAL 10 second) AS bucket,
+        sumState(toUInt64(1)) AS request_count,
+        uniqState(sender_account_id) AS unique_senders
+    FROM send_requests
+    GROUP BY bucket
+
+TYPE materialized
+DATASOURCE requests_10s_mv

@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+
+select option {
+  background: #16171a;
+  color: #fdfdfd;
+}
+
+
+tr {
+  transition: background-color 0.1s ease;
+}

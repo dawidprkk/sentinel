@@ -1,0 +1,14 @@
+DESCRIPTION >
+    Materialized view: delivery feedback counts by status pre-aggregated per 10 seconds
+
+SCHEMA >
+    `bucket` DateTime64(3),
+    `total` AggregateFunction(sum, UInt64),
+    `delivered` AggregateFunction(sum, UInt64),
+    `bounced` AggregateFunction(sum, UInt64),
+    `complained` AggregateFunction(sum, UInt64),
+    `opened` AggregateFunction(sum, UInt64),
+    `clicked` AggregateFunction(sum, UInt64)
+
+ENGINE "AggregatingMergeTree"
+ENGINE_SORTING_KEY "bucket"

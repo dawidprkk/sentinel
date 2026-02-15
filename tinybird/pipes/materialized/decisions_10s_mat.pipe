@@ -1,0 +1,16 @@
+DESCRIPTION >
+    Materialize decision counts into 10-second buckets
+
+NODE mat
+SQL >
+    SELECT
+        toStartOfInterval(timestamp, INTERVAL 10 second) AS bucket,
+        sumState(toUInt64(1)) AS total_decisions,
+        sumState(toUInt64(action = 'block')) AS block_count,
+        sumState(toUInt64(action = 'flag')) AS flag_count,
+        sumState(toUInt64(action = 'allow')) AS allow_count
+    FROM decisions
+    GROUP BY bucket
+
+TYPE materialized
+DATASOURCE decisions_10s_mv

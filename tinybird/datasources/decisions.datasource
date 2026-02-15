@@ -1,0 +1,16 @@
+DESCRIPTION >
+    Rule evaluation decisions
+
+SCHEMA >
+    `id` String `json:$.id`,
+    `event_id` String `json:$.eventId`,
+    `rule_id` Nullable(String) `json:$.ruleId`,
+    `rule_name` Nullable(String) `json:$.ruleName`,
+    `action` String `json:$.action`,
+    `reason` String `json:$.reason`,
+    `severity` String `json:$.severity`,
+    `timestamp` DateTime64(3) `json:$.timestamp`
+
+ENGINE "MergeTree"
+ENGINE_PARTITION_KEY "toYYYYMM(timestamp)"
+ENGINE_SORTING_KEY "timestamp, action"
