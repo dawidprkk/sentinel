@@ -124,4 +124,26 @@ describe("RuleSchema", () => {
     };
     expect(RuleSchema.safeParse(invalid).success).toBe(false);
   });
+
+  it("rejects rate_exceeds on unsupported field", () => {
+    const invalid = {
+      id: "rule_6",
+      name: "Domain spike",
+      description: "Invalid rate field",
+      status: "active",
+      conditions: [
+        {
+          field: "sender.domain",
+          operator: "rate_exceeds",
+          value: 10,
+          window: "1m",
+        },
+      ],
+      logic: "AND",
+      action: "block",
+      severity: "high",
+      createdAt: "2026-02-11T10:00:00.000Z",
+    };
+    expect(RuleSchema.safeParse(invalid).success).toBe(false);
+  });
 });

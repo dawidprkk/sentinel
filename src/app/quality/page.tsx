@@ -43,7 +43,8 @@ interface QualitySummary {
   total_blocks: number;
   total_flags: number;
   total_feedback: number;
-  delivered: number;
+  successful_deliveries: number;
+  deliveries: number;
   bounced: number;
   complained: number;
   detection_rate_pct: number;
@@ -141,15 +142,15 @@ export default function QualityPage() {
         <StatCard
           label={`Complaint Rate (${rangeLabel})`}
           value={`${(summaryRow?.complaint_rate_pct ?? 0).toFixed(2)}%`}
-          sub={`${summaryRow?.complained ?? 0} complaints of ${summaryRow?.total_feedback ?? 0} deliveries`}
-          tooltip={`Percentage of delivered emails that recipients reported as spam in the last ${rangeLabel}. High complaint rate suggests false negatives. Target: <0.1%.`}
+          sub={`${summaryRow?.complained ?? 0} complaints of ${summaryRow?.deliveries ?? 0} deliveries`}
+          tooltip={`Complained / deliveries (delivered + opened + clicked + complained). High complaint rate suggests false negatives. Target: <0.1%.`}
           color={(summaryRow?.complaint_rate_pct ?? 0) > 0.1 ? "red" : "green"}
         />
         <StatCard
           label={`Bounce Rate (${rangeLabel})`}
           value={`${(summaryRow?.bounce_rate_pct ?? 0).toFixed(2)}%`}
-          sub={`${summaryRow?.bounced ?? 0} bounces of ${summaryRow?.total_feedback ?? 0} deliveries`}
-          tooltip={`Percentage of delivered emails that bounced in the last ${rangeLabel}. High bounce rates suggest senders are using invalid recipient lists.`}
+          sub={`${summaryRow?.bounced ?? 0} bounces of ${summaryRow?.total_feedback ?? 0} total feedback`}
+          tooltip={`Bounced / total feedback (all delivery events). High bounce rates suggest senders are using invalid recipient lists.`}
           color={
             (summaryRow?.bounce_rate_pct ?? 0) > 5
               ? "red"
@@ -161,8 +162,8 @@ export default function QualityPage() {
         <StatCard
           label={`Delivery Success (${rangeLabel})`}
           value={`${(summaryRow?.delivery_success_rate_pct ?? 0).toFixed(1)}%`}
-          sub={`${summaryRow?.delivered ?? 0} delivered`}
-          tooltip={`Percentage of allowed emails successfully delivered to the recipient's inbox in the last ${rangeLabel}.`}
+          sub={`${summaryRow?.successful_deliveries ?? 0} delivered of ${summaryRow?.total_feedback ?? 0} total feedback`}
+          tooltip={`Successfully delivered (delivered + opened + clicked) / total_feedback (delivered + opened + clicked + complained + bounced).`}
           color={
             (summaryRow?.delivery_success_rate_pct ?? 0) > 90
               ? "green"

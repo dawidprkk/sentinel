@@ -9,7 +9,7 @@ The architecture and implementation choices prioritize simplicity and clarity ov
 More details on limitations and future work are covered in the respective sections below.
 
 **Note on Tinybird Free Tier limitations:**
-- The daily quota for the free tier is <span style="color:red;">1k events per day</span>, which includes both data ingested and queried. The simulator generates a small but significant number of events, so you may hit the quota limit quickly. To mitigate this, events are batched before being written to Tinybird, auto-refresh is disabled by default, and the rate of new events is low. In addition during testing, you can:
+- The daily quota for the free tier is **🔴 1k events per day**, which includes both data ingested and queried. The simulator generates a small but significant number of events, so you may hit the quota limit quickly. To mitigate this, events are batched before being written to Tinybird, auto-refresh is disabled by default, and the rate of new events is low. In addition during testing, you can:
   - Reduce the number of personas and their sending rates in the simulator configuration.
   - Focus on testing specific features or rules rather than running the full simulation continuously.
 
@@ -332,7 +332,7 @@ The simulator generates realistic email traffic to test rules and populate dashb
 
 1. The simulator ticks every **100ms** (10 ticks/second). Each active persona accumulates fractional events per tick based on its configured rate.
 2. When a persona's accumulator reaches >= 1, it generates that many email events and POSTs them to `/api/ingest` (up to 10 concurrent requests per tick).
-3. The simulator automatically stops after **5 minutes**.
+3. The simulator runs continuously until you stop it.
 
 **Persona types:**
 

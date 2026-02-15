@@ -9,13 +9,14 @@ SQL >
             d.total_blocks,
             d.total_flags,
             f.total_feedback,
-            f.delivered,
+            f.successful_deliveries,
+            f.deliveries,
             f.bounced,
             f.complained,
             toFloat64(if(d.total_decisions > 0, round((d.total_blocks + d.total_flags) / d.total_decisions * 100, 1), 0)) AS detection_rate_pct,
-            toFloat64(if(f.total_feedback > 0, round(f.complained / f.total_feedback * 100, 2), 0)) AS complaint_rate_pct,
+            toFloat64(if(f.total_feedback > 0, round(f.complained / f.deliveries * 100, 2), 0)) AS complaint_rate_pct,
             toFloat64(if(f.total_feedback > 0, round(f.bounced / f.total_feedback * 100, 2), 0)) AS bounce_rate_pct,
-            toFloat64(if(f.total_feedback > 0, round(f.delivered / f.total_feedback * 100, 1), 0)) AS delivery_success_rate_pct
+            toFloat64(if(f.total_feedback > 0, round(f.successful_deliveries / f.total_feedback * 100, 1), 0)) AS delivery_success_rate_pct
         FROM
             (SELECT
                 sumMerge(total_decisions) AS total_decisions,
@@ -24,11 +25,20 @@ SQL >
             FROM decisions_10s_mv
             WHERE bucket >= {{DateTime64(start_time, '2000-01-01 00:00:00.000')}}) AS d,
             (SELECT
-                sumMerge(total) AS total_feedback,
-                sumMerge(delivered) AS delivered,
-                sumMerge(bounced) AS bounced,
-                sumMerge(complained) AS complained
-            FROM delivery_feedback_10s_mv
-            WHERE bucket >= {{DateTime64(start_time, '2000-01-01 00:00:00.000')}}) AS f
+                total_feedback,
+                _delivered + _opened + _clicked AS successful_deliveries,
+                _delivered + _opened + _clicked + complained AS deliveries,
+                bounced,
+                complained
+            FROM
+                (SELECT
+                    sumMerge(total) AS total_feedback,
+                    sumMerge(delivered) AS _delivered,
+                    sumMerge(bounced) AS bounced,
+                    sumMerge(complained) AS complained,
+                    sumMerge(opened) AS _opened,
+                    sumMerge(clicked) AS _clicked
+                FROM delivery_feedback_10s_mv
+                WHERE bucket >= {{DateTime64(start_time, '2000-01-01 00:00:00.000')}})) AS f
 
 TYPE endpoint

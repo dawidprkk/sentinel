@@ -189,7 +189,9 @@ export function RuleForm({ onSubmit, onCancel, initial }: RuleFormProps) {
               <select
                 className={`${selectClass} flex-1`}
                 value={c.field}
+                disabled={c.operator === "rate_exceeds"}
                 onChange={(e) => {
+                  if (c.operator === "rate_exceeds") return;
                   const updated = [...conditions];
                   updated[i] = { ...c, field: e.target.value };
                   setConditions(updated);

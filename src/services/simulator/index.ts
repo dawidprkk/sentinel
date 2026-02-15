@@ -12,7 +12,6 @@ import {
 type SimulatorState = {
   running: boolean;
   intervalId: ReturnType<typeof setInterval> | null;
-  timeoutId: ReturnType<typeof setTimeout> | null;
   abortController: AbortController | null;
   runVersion: number;
   eventsAttempted: number;
@@ -23,7 +22,6 @@ type SimulatorState = {
 const state: SimulatorState = {
   running: false,
   intervalId: null,
-  timeoutId: null,
   abortController: null,
   runVersion: 0,
   eventsAttempted: 0,
@@ -32,7 +30,6 @@ const state: SimulatorState = {
 };
 
 const TICK_INTERVAL_MS = 100;
-const SIMULATOR_TIMEOUT_MS = 5 * 60 * 1000;
 
 function getDefaultBaseUrl() {
   if (process.env.SIMULATOR_BASE_URL) {
@@ -70,12 +67,6 @@ export function startSimulator(
   let isProcessingTick = false;
   const CONCURRENCY_LIMIT = 10;
   const { signal } = state.abortController!;
-
-  state.timeoutId = setTimeout(() => {
-    if (state.running && currentRunVersion === state.runVersion) {
-      stopSimulator();
-    }
-  }, SIMULATOR_TIMEOUT_MS);
 
   state.intervalId = setInterval(async () => {
     if (isProcessingTick || signal.aborted || !state.running || currentRunVersion !== state.runVersion) return;
@@ -149,8 +140,6 @@ export function stopSimulator() {
 
   if (state.intervalId) clearInterval(state.intervalId);
   state.intervalId = null;
-  if (state.timeoutId) clearTimeout(state.timeoutId);
-  state.timeoutId = null;
   personaManager.reset();
   cancelAllFeedbacks();
   return { status: "stopped" as const };

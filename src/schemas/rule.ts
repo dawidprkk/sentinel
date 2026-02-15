@@ -17,6 +17,14 @@ export const RuleConditionSchema = z.object({
   window: z.string().optional(),
 }).superRefine((condition, ctx) => {
   if (condition.operator === "rate_exceeds") {
+    if (condition.field !== "sender.accountId") {
+      ctx.addIssue({
+        code: "custom",
+        path: ["field"],
+        message: 'rate_exceeds is only supported for field "sender.accountId"',
+      });
+    }
+
     if (
       typeof condition.value !== "number" ||
       !Number.isFinite(condition.value) ||
