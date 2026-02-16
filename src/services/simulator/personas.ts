@@ -85,6 +85,7 @@ const BAD_ACTOR_PROFILES = [
     linkCount: 2,
     bodyLengthBytes: 1200,
     hasAttachments: false,
+    highThroughput: true,
   },
   {
     prefix: "bad_actor_suspicious",
@@ -192,7 +193,10 @@ function createBadActorPersona(profileIndex: number): Persona {
   const normalizedIndex = normalizeIndex(profileIndex, BAD_ACTOR_PROFILES.length);
   const profile = BAD_ACTOR_PROFILES[normalizedIndex];
   const uniqueId = Math.floor(Math.random() * 1000);
-  const targetRate = simulatorConfig.badActorRatePerMinute / 60;
+  const ratePerMinute = profile.highThroughput
+    ? simulatorConfig.badActorHighThroughputRatePerMinute
+    : simulatorConfig.badActorRatePerMinute;
+  const targetRate = ratePerMinute / 60;
 
   return {
     id: randomUUID(),
